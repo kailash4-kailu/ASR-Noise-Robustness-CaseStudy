@@ -5,7 +5,7 @@
 **USN / Roll Number:** 23BTRCL233  
 **Institution:** Jain Deemed to be University, Faculty of Engineering and Technology  
 **Department:** Computer Science and Engineering (CSE - AIML)  
-**Course:** Speech Recognition and Conversational Systems (`22AIMLDE24`) — Semester VII  
+**Course:** Speech Recognition and Conversational Systems (`22AIMLDE24`) — Semester VII (Section C)  
 **Instructor:** Prof. Shobha H R  
 
 ---

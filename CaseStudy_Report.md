@@ -6,7 +6,7 @@
 **Course:** Speech Recognition and Conversational Systems (Course Code: `22AIMLDE24`, Credits: 03, Semester: VII)  
 **Student Name:** SOMISETTY JAGANNADA KAILASH  
 **Roll Number / USN:** 23BTRCL233  
-**Section:** VII Sem CSE - AIML (Section A)  
+**Section:** VII Sem CSE - AIML (Section C)  
 **Academic Year:** 2026 - 27  
 **Submitted To:** Prof. Shobha H R, Assistant Professor, Department of CSE - AIML  
 **Date of Submission:** 24 November 2026  

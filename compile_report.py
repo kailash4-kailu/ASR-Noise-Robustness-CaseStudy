@@ -180,7 +180,7 @@ def build_pdf_report(filename):
         [Paragraph("<b>Attribute</b>", body_bold), Paragraph("<b>Details</b>", body_bold)],
         [Paragraph("<b>Name of Student</b>", body_style), Paragraph("SOMISETTY JAGANNADA KAILASH", body_bold)],
         [Paragraph("<b>Roll Number / USN</b>", body_style), Paragraph("23BTRCL233", body_bold)],
-        [Paragraph("<b>Section</b>", body_style), Paragraph("VII Sem CSE - AIML (Section A)", body_style)],
+        [Paragraph("<b>Section</b>", body_style), Paragraph("VII Sem CSE - AIML (Section C)", body_style)],
         [Paragraph("<b>Academic Year</b>", body_style), Paragraph("2026 - 27", body_style)]
     ]
     t_meta = Table(meta_data, colWidths=[160, 320])
