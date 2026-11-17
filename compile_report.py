@@ -209,7 +209,7 @@ def build_pdf_report(filename):
     story.append(Paragraph("Department of CSE - AIML", sub_body_style))
     story.append(Spacer(1, 20))
 
-    story.append(Paragraph("<b>Date of Submission:</b> 24 November 2026", sub_title_style))
+    story.append(Paragraph("<b>Date of Submission:</b> 17 November 2026", sub_title_style))
     story.append(Spacer(1, 8))
     story.append(Paragraph("<b>Code Repository Link:</b> <font color='#0D47A1'><u>https://github.com/kailash4-kailu/ASR-Noise-Robustness-CaseStudy</u></font>", ParagraphStyle('RepoLink', fontName='Helvetica', fontSize=9.5, leading=13, textColor=colors.HexColor('#263238'))))
 
