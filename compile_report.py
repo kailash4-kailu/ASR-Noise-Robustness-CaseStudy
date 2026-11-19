@@ -8,52 +8,54 @@ from reportlab.platypus import (
 )
 from reportlab.pdfgen import canvas
 
-class NumberedCanvas(canvas.Canvas):
-    def __init__(self, *args, **kwargs):
-        super(NumberedCanvas, self).__init__(*args, **kwargs)
-        self._saved_page_states = []
+def get_numbered_canvas(candidate_name, candidate_usn):
+    class NumberedCanvas(canvas.Canvas):
+        def __init__(self, *args, **kwargs):
+            super(NumberedCanvas, self).__init__(*args, **kwargs)
+            self._saved_page_states = []
 
-    def showPage(self):
-        self._saved_page_states.append(dict(self.__dict__))
-        self._startPage()
+        def showPage(self):
+            self._saved_page_states.append(dict(self.__dict__))
+            self._startPage()
 
-    def save(self):
-        num_pages = len(self._saved_page_states)
-        for state in self._saved_page_states:
-            self.__dict__.update(state)
-            self.draw_page_decorations(num_pages)
-            super(NumberedCanvas, self).showPage()
-        super(NumberedCanvas, self).save()
+        def save(self):
+            num_pages = len(self._saved_page_states)
+            for state in self._saved_page_states:
+                self.__dict__.update(state)
+                self.draw_page_decorations(num_pages)
+                super(NumberedCanvas, self).showPage()
+            super(NumberedCanvas, self).save()
 
-    def draw_page_decorations(self, page_count):
-        if self._pageNumber == 1:
-            # Suppress running header/footer on Title Page
-            return
+        def draw_page_decorations(self, page_count):
+            if self._pageNumber == 1:
+                # Suppress running header/footer on Title Page
+                return
 
-        self.saveState()
-        self.setFont("Helvetica-Bold", 8)
-        self.setFillColor(colors.HexColor("#37474F"))
-        
-        # Header
-        self.drawString(54, 750, "JAIN DEEMED-TO-BE UNIVERSITY | DEPT. OF CSE (AIML) - 22AIMLDE24")
-        self.setFont("Helvetica-Oblique", 8)
-        self.drawRightString(558, 750, "ASR Noise Robustness Case Study")
-        
-        self.setStrokeColor(colors.HexColor("#CFD8DC"))
-        self.setLineWidth(0.8)
-        self.line(54, 744, 558, 744)
-        
-        # Footer
-        self.line(54, 46, 558, 46)
-        self.setFont("Helvetica", 8)
-        self.setFillColor(colors.HexColor("#546E7A"))
-        self.drawString(54, 34, "Candidate: SOMISETTY JAGANNADA KAILASH (USN: 23BTRCL233)")
-        
-        page_str = f"Page {self._pageNumber} of {page_count}"
-        self.drawRightString(558, 34, page_str)
-        self.restoreState()
+            self.saveState()
+            self.setFont("Helvetica-Bold", 8)
+            self.setFillColor(colors.HexColor("#37474F"))
+            
+            # Header
+            self.drawString(54, 750, "JAIN DEEMED-TO-BE UNIVERSITY | DEPT. OF CSE (AIML) - 22AIMLDE24")
+            self.setFont("Helvetica-Oblique", 8)
+            self.drawRightString(558, 750, "ASR Noise Robustness Case Study")
+            
+            self.setStrokeColor(colors.HexColor("#CFD8DC"))
+            self.setLineWidth(0.8)
+            self.line(54, 744, 558, 744)
+            
+            # Footer
+            self.line(54, 46, 558, 46)
+            self.setFillColor(colors.HexColor("#546E7A"))
+            self.drawString(54, 34, f"Candidate: {candidate_name} (USN: {candidate_usn})")
+            
+            page_str = f"Page {self._pageNumber} of {page_count}"
+            self.drawRightString(558, 34, page_str)
+            self.restoreState()
 
-def build_pdf_report(filename):
+    return NumberedCanvas
+
+def build_pdf_report(filename, student_name, student_usn, section="VII Sem CSE - AIML (Section C)", submission_date="19 November 2026", repo_url="https://github.com/kailash4-kailu/ASR-Noise-Robustness-CaseStudy"):
     # Standard letter: 612 x 792 pt. Margins: 54 pt (0.75 in). Printable width = 504 pt.
     doc = SimpleDocTemplate(
         filename,
@@ -150,13 +152,13 @@ def build_pdf_report(filename):
     # TITLE PAGE (Balanced vertically across the whole 792pt page)
     # =========================================================================
     if os.path.exists('title_logo_0.png'):
-        story.append(Image('title_logo_0.png', width=175, height=66))
-        story.append(Spacer(1, 16))
+        story.append(Image('title_logo_0.png', width=170, height=64))
+        story.append(Spacer(1, 14))
 
     story.append(Paragraph("<b>Jain Deemed to be University</b>", ParagraphStyle('InstHead1', fontName='Helvetica-Bold', fontSize=14, leading=17, alignment=1, textColor=colors.HexColor('#1A237E'))))
-    story.append(Spacer(1, 4))
+    story.append(Spacer(1, 3))
     story.append(Paragraph("<b>Faculty of Engineering and Technology</b>", ParagraphStyle('InstHead2', fontName='Helvetica', fontSize=12, leading=15, alignment=1, textColor=colors.HexColor('#263238'))))
-    story.append(Spacer(1, 4))
+    story.append(Spacer(1, 3))
     story.append(Paragraph("<b>Department of Computer Science and Engineering</b>", ParagraphStyle('InstHead3', fontName='Helvetica', fontSize=11, leading=14, alignment=1, textColor=colors.HexColor('#37474F'))))
     story.append(Spacer(1, 24))
 
@@ -178,9 +180,9 @@ def build_pdf_report(filename):
     # Attribute table (centered, matching template)
     meta_data = [
         [Paragraph("<b>Attribute</b>", body_bold), Paragraph("<b>Details</b>", body_bold)],
-        [Paragraph("<b>Name of Student</b>", body_style), Paragraph("SOMISETTY JAGANNADA KAILASH", body_bold)],
-        [Paragraph("<b>Roll Number / USN</b>", body_style), Paragraph("23BTRCL233", body_bold)],
-        [Paragraph("<b>Section</b>", body_style), Paragraph("VII Sem CSE - AIML (Section C)", body_style)],
+        [Paragraph("<b>Name of Student</b>", body_style), Paragraph(student_name, body_bold)],
+        [Paragraph("<b>Roll Number / USN</b>", body_style), Paragraph(student_usn, body_bold)],
+        [Paragraph("<b>Section</b>", body_style), Paragraph(section, body_style)],
         [Paragraph("<b>Academic Year</b>", body_style), Paragraph("2026 - 27", body_style)]
     ]
     t_meta = Table(meta_data, colWidths=[160, 320])
@@ -209,9 +211,9 @@ def build_pdf_report(filename):
     story.append(Paragraph("Department of CSE - AIML", sub_body_style))
     story.append(Spacer(1, 20))
 
-    story.append(Paragraph("<b>Date of Submission:</b> 17 November 2026", sub_title_style))
+    story.append(Paragraph(f"<b>Date of Submission:</b> {submission_date}", sub_title_style))
     story.append(Spacer(1, 8))
-    story.append(Paragraph("<b>Code Repository Link:</b> <font color='#0D47A1'><u>https://github.com/kailash4-kailu/ASR-Noise-Robustness-CaseStudy</u></font>", ParagraphStyle('RepoLink', fontName='Helvetica', fontSize=9.5, leading=13, textColor=colors.HexColor('#263238'))))
+    story.append(Paragraph(f"<b>Code Repository Link:</b> <font color='#0D47A1'><u>{repo_url}</u></font>", ParagraphStyle('RepoLink', fontName='Helvetica', fontSize=9.5, leading=13, textColor=colors.HexColor('#263238'))))
 
     story.append(PageBreak())  # Title page ends here, uncounted
 
@@ -601,14 +603,42 @@ def build_pdf_report(filename):
         "The complete Python codebase implementing this end-to-end benchmark, including dataset ingestion, calibrated SNR mixing, "
         "Boll spectral subtraction with over-subtraction and spectral floor clamping, Whisper and Wav2Vec 2.0 inference harnesses, "
         "Levenshtein error calculation, and figure generation scripts is open-source and publicly hosted at: <br/>"
-        "&nbsp;&nbsp;&nbsp;&nbsp;<b>GitHub / Google Colab Repository:</b> <font color='#0D47A1'><u>https://github.com/kailash4-kailu/ASR-Noise-Robustness-CaseStudy</u></font><br/>"
+        f"&nbsp;&nbsp;&nbsp;&nbsp;<b>GitHub / Google Colab Repository:</b> <font color='#0D47A1'><u>{repo_url}</u></font><br/>"
         "Permissions are configured to <i>'Anyone with the link can view'</i> in strict accordance with the academic integrity guidelines."
     )
     story.append(Paragraph(app_text, body_style))
 
-    doc.build(story, canvasmaker=NumberedCanvas)
+    doc.build(story, canvasmaker=get_numbered_canvas(student_name, student_usn))
     print(f"Report successfully compiled to {filename}")
 
 if __name__ == '__main__':
-    output_filename = "23BTRCL233_SOMISETTY_JAGANNADA_KAILASH_CaseStudy.pdf"
-    build_pdf_report(output_filename)
+    students = [
+        {
+            "name": "SOMISETTY JAGANNADA KAILASH",
+            "usn": "23BTRCL233",
+            "filename": "23BTRCL233_SOMISETTY_JAGANNADA_KAILASH_CaseStudy.pdf",
+            "date": "19 November 2026"
+        },
+        {
+            "name": "RITHIK S",
+            "usn": "23BTRCL070",
+            "filename": "23BTRCL070_RITHIK_S_CaseStudy.pdf",
+            "date": "19 November 2026"
+        },
+        {
+            "name": "ROHIT KUMAR PATIL",
+            "usn": "23BTRCL071",
+            "filename": "23BTRCL071_ROHIT_KUMAR_PATIL_CaseStudy.pdf",
+            "date": "19 November 2026"
+        }
+    ]
+
+    for s in students:
+        print(f"Compiling report for {s['name']} ({s['usn']})...")
+        build_pdf_report(
+            filename=s["filename"],
+            student_name=s["name"],
+            student_usn=s["usn"],
+            section="VII Sem CSE - AIML (Section C)",
+            submission_date=s["date"]
+        )
