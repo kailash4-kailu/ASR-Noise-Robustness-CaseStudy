@@ -1,4 +1,4 @@
-# Evaluating Acoustic Robustness in Automatic Speech Recognition: Impact of Additive Ambient Noise and Spectral Denoising across Automotive and Smart Home Environments
+# Speech Recognition in Noisy Environments: Evaluating Whisper and Wav2Vec2 Robustness with Spectral Subtraction
 
 **Case Study Option Selected:** Option A: Robustness in Noisy Environments (Automotive / Smart Home)  
 **Institution:** Jain Deemed to be University, Faculty of Engineering and Technology  

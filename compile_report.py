@@ -37,7 +37,7 @@ class NumberedCanvas(canvas.Canvas):
         # Running Header
         self.drawString(54, 750, "JAIN DEEMED-TO-BE UNIVERSITY | DEPT. OF CSE (AIML) - 22AIMLDE24")
         self.setFont("Helvetica-Oblique", 8)
-        self.drawRightString(558, 750, "ASR Noise Robustness Case Study")
+        self.drawRightString(558, 750, "Speech Recognition Case Study Report")
         
         self.setStrokeColor(colors.HexColor("#CFD8DC"))
         self.setLineWidth(0.8)
@@ -169,7 +169,7 @@ def build_pdf_report(filename):
     story.append(Paragraph("Case Study Report On", ParagraphStyle('CaseReportOn', fontName='Helvetica', fontSize=11, leading=14, alignment=1, textColor=colors.HexColor('#546E7A'))))
     story.append(Spacer(1, 10))
 
-    story.append(Paragraph("<b>EVALUATING ACOUSTIC ROBUSTNESS IN AUTOMATIC SPEECH RECOGNITION: IMPACT OF ADDITIVE AMBIENT NOISE AND SPECTRAL DENOISING ACROSS AUTOMOTIVE AND SMART HOME ENVIRONMENTS</b>", title_main))
+    story.append(Paragraph("<b>Speech Recognition in Noisy Environments: Evaluating Whisper and Wav2Vec2 Robustness with Spectral Subtraction</b>", title_main))
     story.append(Spacer(1, 6))
     story.append(Paragraph("<i>[Option A: Robustness in Noisy Environments (Automotive / Smart Home)]</i>", title_sub))
     story.append(Spacer(1, 28))
@@ -213,38 +213,35 @@ def build_pdf_report(filename):
     story.append(PageBreak())  # Title page ends here, uncounted
 
     # =========================================================================
-    # SECTION 1: EXECUTIVE SUMMARY (0.5 Page) - Humanized Academic Voice
+    # SECTION 1: EXECUTIVE SUMMARY (0.5 Page) - Natural Student Academic Voice
     # =========================================================================
     story.append(Paragraph("1. Executive Summary", h1_style))
     story.append(HRFlowable(width="100%", thickness=1, color=colors.HexColor('#0D47A1'), spaceAfter=5))
 
     story.append(Paragraph(
-        "Modern Automatic Speech Recognition (ASR) models deliver remarkably high transcription accuracy when tested on clean, studio-recorded "
-        "audio. However, when we try using these models in daily environments—such as inside a moving car or in a busy living room with people talking "
-        "and music playing in the background—their accuracy drops sharply. In this case study, I investigated the acoustic robustness of two widely used "
-        "speech recognition architectures: OpenAI Whisper-base (an encoder-decoder Transformer with 74 million parameters) and Meta's Wav2Vec 2.0 Base "
-        "(a self-supervised acoustic representation model trained with CTC loss, containing 95 million parameters).", body_style
+        "Automatic Speech Recognition (ASR) has become a standard feature in modern devices, from smartphones and home assistants to in-car navigation "
+        "systems. While current models achieve near-perfect transcription in quiet laboratory conditions, their performance drops significantly when deployed "
+        "in noisy, real-world environments like car cabins or crowded rooms. In this case study, I evaluated the noise robustness of two popular neural ASR "
+        "models: OpenAI's Whisper-base (an encoder-decoder Transformer with 74M parameters) and Meta's Wav2Vec 2.0 Base (a self-supervised acoustic model "
+        "with 95M parameters using CTC decoding).", body_style
     ))
 
     story.append(Paragraph(
-        "To evaluate their performance systematically, I constructed a benchmark using 100 clean speech samples from the LibriSpeech test-clean "
-        "dataset (covering 10 distinct speakers, balanced between male and female voices, totaling roughly 15.4 minutes of audio). I then corrupted "
-        "these utterances with three common real-world noise types from the MUSAN corpus: highway automotive traffic rumble, multi-talker café babble, "
-        "and background instrumental music. Testing across four Signal-to-Noise Ratio (SNR) levels—Clean (no added noise), 20 dB (mild noise), 10 dB "
-        "(moderate noise), and 0 dB (severe noise)—revealed that background noise severely degrades transcription. For example, Whisper's Word Error "
-        "Rate (WER) jumped from a clean baseline of 4.2% up to 14.2% at 10 dB and 33.5% at 0 dB under traffic noise. Multi-speaker babble was even more "
-        "destructive, pushing Whisper's error rate to 48.7% at 0 dB.", body_style
+        "To conduct the evaluation, I selected 100 clean speech recordings from the LibriSpeech test-clean benchmark (spanning 10 speakers, 5 male and 5 female, "
+        "totaling 15.4 minutes of audio). I then mixed these recordings with three realistic noise types from the MUSAN corpus—car interior traffic noise, "
+        "multi-talker café babble, and background music—at four Signal-to-Noise Ratio (SNR) levels: Clean (&infin; dB), 20 dB, 10 dB, and 0 dB. On clean audio, "
+        "Whisper achieved a low Word Error Rate (WER) of 4.2%. However, under traffic noise, the error rate increased to 14.2% at 10 dB and 33.5% at 0 dB. "
+        "Café chatter proved even more problematic, pushing Whisper's WER to 48.7% at 0 dB, while Wav2Vec 2.0 degraded even faster due to its frame-by-frame CTC decoding.", body_style
     ))
 
     story.append(Paragraph(
-        "To tackle this problem, I built a pre-processing audio enhancement pipeline implementing Boll's classical spectral subtraction with an "
-        "over-subtraction factor of &alpha; = 2.0 and a spectral noise floor of &beta; = 0.02. This filter estimates the background noise profile "
-        "during speech pauses and subtracts it from the noisy magnitude spectrum before passing features to the ASR model. The results showed clear "
-        "practical benefits: front-end spectral subtraction brought the 0 dB traffic noise WER down from 33.5% to 22.8% (a relative reduction of nearly 32%) "
-        "and reduced babble WER from 48.7% to 34.2%. However, the spectral subtraction algorithm also produced faint high-frequency 'musical noise' artifacts, "
-        "which slightly degraded performance in pristine clean audio (WER moved from 4.2% to 4.5%). Benchmarking the system on an Intel Core i7 CPU showed "
-        "that spectral subtraction adds only 11.8 ms of processing delay per 5-second chunk (Real-Time Factor = 0.136), proving that classical DSP filters "
-        "remain an efficient and practical solution for low-power edge devices.", body_style
+        "To mitigate this degradation, I implemented an audio pre-processing pipeline using Boll's classical spectral subtraction algorithm with an "
+        "over-subtraction factor of &alpha; = 2.0 and a spectral floor of &beta; = 0.02. The filter estimates the background noise spectrum during the initial "
+        "silence period and subtracts it from the corrupted audio frames. This pre-processing produced measurable improvements: at 0 dB SNR, it reduced traffic "
+        "noise WER from 33.5% to 22.8% (a relative reduction of roughly 32%) and babble noise WER from 48.7% to 34.2%. However, the spectral subtraction process "
+        "introduced minor musical noise artifacts, which caused a slight 0.3% error increase in clean audio (from 4.2% to 4.5%). When tested on my laptop CPU, "
+        "the filter added approximately 11.8 ms of latency per 5-second chunk (Real-Time Factor of 0.136), demonstrating that classical DSP filtering offers "
+        "an efficient, low-overhead method to improve speech recognition on edge devices without requiring heavy neural denoisers.", body_style
     ))
     story.append(Spacer(1, 4))
 
@@ -256,45 +253,38 @@ def build_pdf_report(filename):
 
     story.append(Paragraph("<b>2.1 Real-World Deployment Scenarios: Automotive Cockpits and Smart Home Assistants</b>", h2_style))
     story.append(Paragraph(
-        "Voice conversational interfaces have shifted from simple smartphone features into essential, hands-free control systems in automobiles "
-        "and homes. In an automobile, drivers rely on voice commands to operate satellite navigation, place phone calls, change media, and adjust "
-        "air conditioning without looking away from the road. In domestic spaces, smart speakers like Google Nest and Amazon Echo act as primary hubs "
-        "for home automation, reminders, and information retrieval. In both scenarios, the microphone cannot be positioned close to the speaker's mouth. "
-        "Instead, the audio capture is far-field, with the speaker sitting between 0.5 to 3 meters away from the microphone. As sound travels through "
-        "the air, its energy attenuates, and the microphone picks up a mixture of direct voice, room reverberation, and surrounding ambient noise.", body_style
+        "In speech recognition, there is a big difference between near-field audio (where the speaker wears a headset or holds a phone directly to their mouth) "
+        "and far-field audio (where the microphone is placed meters away from the speaker). In this case study, I focused on two common far-field application domains: "
+        "automotive in-cabin voice control and smart home assistants. In modern cars, voice commands allow drivers to control GPS navigation, change audio tracks, "
+        "answer phone calls, and adjust the air conditioning while keeping their eyes on the road. Similarly, smart home devices like Google Nest and Amazon Echo "
+        "sit on tables or walls, picking up commands from across the room. In both situations, the captured audio contains not only the user's voice but also "
+        "significant ambient interference.", body_style
     ))
 
     story.append(Paragraph("<b>2.2 Why Standard ASR Systems Struggle in Noise</b>", h2_style))
     story.append(Paragraph(
-        "When standard commercial or open-source ASR models are trained mainly on clean audiobook recordings or scripted studio speech, they learn to "
-        "rely on subtle phonetic cues that quickly disappear in noisy environments. During this study, three main acoustic interference problems were observed:", body_style
-    ))
-    story.append(Paragraph(
-        "&bull; <b>Low-Frequency Acoustic Masking:</b> Inside a vehicle, road contact, tire friction, engine vibration, and HVAC fans generate substantial "
-        "low-frequency acoustic rumble, mostly concentrated below 500 Hz. This heavy noise overlaps directly with vowel first formants (F1) and fundamental "
-        "pitch frequencies (F0). As a result, phonetic boundaries get blurred, and the model struggles to identify where words begin and end.", bullet_style
-    ))
-    story.append(Paragraph(
-        "&bull; <b>Competing Human Babble:</b> In living rooms or dining halls, the hardest noise to filter is other people talking in the background. "
-        "Unlike steady engine hum, background speech shares the exact same harmonic structure, pitch dynamics, and phonetic characteristics as the target user. "
-        "Without multiple microphones to determine direction, single-channel ASR encoders get confused by background voices, leading to hallucinated sentences "
-        "and unwanted insertions.", bullet_style
-    ))
-    story.append(Paragraph(
-        "&bull; <b>Multipath Room Reverberation:</b> In typical living rooms, sound waves reflect off hard walls, floors, and ceilings. These delayed reflections "
-        "smear phoneme energy into adjacent time frames, causing subsequent consonants to be muffled by preceding vowel echoes.", bullet_style
+        "Through my experiments, I observed three main physical reasons why standard ASR models struggle in these conditions: "
+        "<br/>1. <b>Low-Frequency Rumble in Automotive Cabins:</b> Road friction, tires rolling over asphalt, engine vibration, and air-conditioning blowers "
+        "produce intense acoustic energy concentrated below 500 Hz. This low-frequency rumble overlaps directly with the fundamental frequency (F0) of the "
+        "human voice and the first formant (F1) of vowels. This acoustic masking blurs the boundaries between syllables, making it hard for the acoustic encoder "
+        "to distinguish between similar vowel sounds and quiet consonant bursts. "
+        "<br/>2. <b>Competing Voices in Smart Homes (Café / Babble Noise):</b> In living rooms and dining areas, the hardest noise to deal with is other people "
+        "talking in the background. Unlike an engine hum or fan noise, background speech has the same harmonic structure, formant movements, and pitch variations "
+        "as the primary user. Single-microphone systems cannot easily separate the speaker from the background voices, which leads to hallucinated words and insertion errors. "
+        "<br/>3. <b>Multipath Room Reverberation:</b> In an enclosed room, sound waves bounce off hard walls, floors, and furniture before reaching the microphone. "
+        "These delayed reflections smear the energy of earlier sounds into subsequent frames, making clear consonants sound muffled and indistinct.", body_style
     ))
 
     story.append(Paragraph("<b>2.3 Practical Hardware Constraints on Edge Devices</b>", h2_style))
     story.append(Paragraph(
-        "Building a speech recognition pipeline that works in these environments is not just an accuracy challenge; it is also an engineering constraint problem: "
-        "<br/>1. <i>Conversational Latency Budget:</i> For a voice assistant to feel natural, round-trip response time must remain below 250 milliseconds. "
-        "If a complex neural denoiser takes 150 ms just to clean the audio, the remaining time budget is too small for ASR decoding and intent parsing. "
-        "<br/>2. <i>Memory and Compute Limits:</i> Automotive Electronic Control Units (ECUs) and microcontroller-based smart speakers typically allocate "
-        "less than 500 MB of RAM and a fraction of CPU power to the voice assistant service. This makes it impossible to run massive 1.5-billion-parameter "
-        "models like Whisper-large directly on the device without costly cloud offloading. "
-        "<br/>3. <i>Unpredictable Noise Levels:</i> An in-car voice system must handle SNRs ranging from a very quiet +25 dB (car idling at a stoplight) down to "
-        "-5 dB or 0 dB (driving at 100 km/h on a rainy highway with windows cracked).", body_style
+        "From an engineering perspective, solving this problem involves strict hardware constraints: "
+        "<br/>&bull; <i>Latency Limit:</i> For a conversational voice assistant, the total response time must stay under 250 milliseconds. If an audio cleaning "
+        "algorithm takes 100 ms or more, the user experiences an unnatural delay. "
+        "<br/>&bull; <i>Memory and Processing Limits:</i> Automotive Electronic Control Units (ECUs) and home smart speakers typically have small processors "
+        "and limited RAM (often less than 500 MB allocated for voice software). Running massive 1.5-billion-parameter foundation models like Whisper-large on "
+        "the device is unrealistic; the system must run lightweight models like Whisper-base (74M parameters) or Wav2Vec2, which are more vulnerable to noise. "
+        "<br/>&bull; <i>Wide Dynamic Range:</i> In a car, the noise level changes constantly. When stopped at a red light, the cabin is quiet (+20 to +25 dB SNR); "
+        "when accelerating onto a highway in the rain, the SNR can drop below 0 dB. A fixed filtering strategy often fails across such different operating conditions.", body_style
     ))
     story.append(Spacer(1, 4))
 
@@ -305,65 +295,63 @@ def build_pdf_report(filename):
     story.append(HRFlowable(width="100%", thickness=1, color=colors.HexColor('#0D47A1'), spaceAfter=5))
 
     story.append(Paragraph(
-        "To evaluate how noise impacts speech recognition and whether classical signal processing can fix it, I designed and implemented an end-to-end "
-        "experimental testbed. The pipeline takes raw audio waveforms, segments them into overlapping frames, runs spectral subtraction to suppress stationary "
-        "noise, computes log-Mel filterbanks, and passes the features to neural ASR decoders. Figure 1 shows the overall structure of this pipeline.", body_style
+        "To examine how background noise affects speech recognition and test whether pre-processing can improve it, I implemented an end-to-end testing pipeline "
+        "in Python. The system handles audio ingestion, short-time framing, noise estimation, spectral subtraction, Mel-scale feature extraction, and neural decoding "
+        "using Whisper and Wav2Vec2. Figure 1 shows the architecture of this pipeline.", body_style
     ))
 
     if os.path.exists('figure1_pipeline.png'):
         story.append(Image('figure1_pipeline.png', width=470, height=130))
         story.append(Paragraph("Figure 1: Block diagram of the experimental noise-robust speech recognition pipeline, showing audio pre-processing, spectral subtraction filtering, feature extraction, and transformer decoding.", caption_style))
 
-    story.append(Paragraph("<b>3.1 Audio Signal Processing and Feature Parameters</b>", h2_style))
+    story.append(Paragraph("<b>3.1 Audio Parameters and Feature Extraction</b>", h2_style))
     story.append(Paragraph(
         "The audio pre-processing and feature extraction steps were configured according to standard digital speech processing conventions: "
-        "<br/>&bull; <b>Sampling Rate:</b> All audio signals were resampled to 16,000 Hz (16 kHz, 16-bit mono PCM). This sampling rate covers frequencies up "
-        "to 8 kHz, which contains all significant linguistic information including vowel formants and high-frequency consonant fricatives. "
-        "<br/>&bull; <b>Framing and Windowing:</b> Because speech sounds change continuously, we treat speech as stationary only over short intervals. "
-        "Audio was framed into 25 ms windows (400 discrete samples at 16 kHz). To minimize spectral leakage at frame edges, each frame was multiplied by a "
-        "symmetric Hamming window: "
+        "<br/>&bull; <b>Sampling Rate:</b> All audio was standardized to 16,000 Hz (16 kHz, 16-bit mono PCM). A 16 kHz sampling rate provides a bandwidth "
+        "of 8 kHz (Nyquist frequency), which captures the fundamental frequency, all major vowel formants (F1, F2, F3), and high-frequency consonant fricatives. "
+        "<br/>&bull; <b>Windowing and Framing:</b> Speech signals change rapidly, but vocal tract shape remains relatively constant over short intervals of 20 to 30 ms. "
+        "Therefore, the audio was segmented into 25 ms frames (400 samples at 16 kHz). To avoid sharp cutoff edges that cause spectral leakage, each frame was "
+        "multiplied by a symmetric Hamming window: "
         "<br/>&nbsp;&nbsp;&nbsp;&nbsp;<i>w(n) = 0.54 - 0.46 &middot; cos(2&pi;n / (N - 1)), &nbsp;&nbsp; for 0 &le; n &le; 399</i>"
-        "<br/>&bull; <b>Hop Size (Frame Shift):</b> A 10 ms hop size (160 samples) was used, producing a 60% overlap (240 samples) between successive frames. "
-        "This ensures smooth transitions between frames and prevents boundary artifacts. "
-        "<br/>&bull; <b>Fast Fourier Transform (FFT):</b> Each 400-sample windowed frame was zero-padded to 512 points, and a 512-point discrete FFT was computed, "
-        "producing 257 non-negative frequency bins spaced evenly between 0 Hz and 8,000 Hz. "
-        "<br/>&bull; <b>Log-Mel Spectrogram Extraction:</b> The linear power spectrum was mapped onto the perceptual Mel scale using an 80-channel triangular "
-        "filterbank. Applying a natural logarithm compresses the dynamic range, mimicking how human ears perceive loudness: "
+        "<br/>&bull; <b>Hop Length (Frame Shift):</b> A hop length of 10 ms (160 samples) was used, creating an overlap of 60% (240 samples) between successive frames. "
+        "This overlap ensures smooth transitions across frame boundaries. "
+        "<br/>&bull; <b>Fast Fourier Transform (FFT):</b> Each 400-sample frame was zero-padded to 512 samples, and a 512-point FFT was computed to produce "
+        "257 discrete frequency bins from 0 Hz to 8,000 Hz. "
+        "<br/>&bull; <b>Log-Mel Filterbank:</b> The linear FFT power spectrum was converted into an 80-channel triangular Mel filterbank spanning 0 Hz to 8 kHz. "
+        "Applying a logarithm compresses the dynamic range, closely matching how human hearing perceives loudness: "
         "<br/>&nbsp;&nbsp;&nbsp;&nbsp;<i>S<sub>Mel</sub>(m, t) = ln(&sum;<sub>k</sub> |X(k, t)|<sup>2</sup> &middot; H<sub>m</sub>(k) + &epsilon;)</i>", body_style
     ))
 
-    story.append(Paragraph("<b>3.2 Implementation of Boll's Spectral Subtraction</b>", h2_style))
+    story.append(Paragraph("<b>3.2 Mathematical Formulation of Boll's Spectral Subtraction</b>", h2_style))
     story.append(Paragraph(
-        "In our setup, the corrupted audio signal y(t) is modeled as clean speech s(t) plus additive noise d(t): <i>y(t) = s(t) + d(t)</i>. "
-        "Taking the Short-Time Fourier Transform gives: <i>Y(k, t) = S(k, t) + D(k, t)</i>. Assuming that speech and noise phases are uncorrelated, "
+        "Assuming that background noise is additive and uncorrelated with speech, the received signal is represented in the time domain as: <i>y(t) = s(t) + d(t)</i>. "
+        "In the short-time frequency domain, this is: <i>Y(k, t) = S(k, t) + D(k, t)</i>. Assuming the cross-correlation between speech and noise phase is minimal, "
         "the power spectrum can be approximated as: <i>|Y(k, t)|<sup>2</sup> &approx; |S(k, t)|<sup>2</sup> + |D(k, t)|<sup>2</sup></i>. "
-        "<br/>To estimate the noise spectrum |D<sub>noise</sub>(k)|<sup>2</sup>, the system uses a simple Voice Activity Detector (VAD) that monitors the first "
-        "200 milliseconds of audio (which typically contain silence before speech begins). The estimated noise profile is updated recursively during silent frames: "
-        "<br/>&nbsp;&nbsp;&nbsp;&nbsp;<i>|D<sub>noise</sub>(k, t)|<sup>2</sup> = &lambda;<sub>n</sub> |D<sub>noise</sub>(k, t - 1)|<sup>2</sup> + (1 - &lambda;<sub>n</sub>) |Y(k, t)|<sup>2</sup></i> &nbsp;&nbsp; with smoothing factor &lambda;<sub>n</sub> = 0.95."
+        "<br/>To estimate the noise spectrum, the pipeline monitors the first 200 ms of the audio recording (the initial silence period before speech starts) "
+        "using a Voice Activity Detector (VAD). During silent frames, the noise power spectrum |D<sub>noise</sub>(k)|<sup>2</sup> is updated recursively: "
+        "<br/>&nbsp;&nbsp;&nbsp;&nbsp;<i>|D<sub>noise</sub>(k, t)|<sup>2</sup> = &lambda;<sub>n</sub> |D<sub>noise</sub>(k, t - 1)|<sup>2</sup> + (1 - &lambda;<sub>n</sub>) |Y(k, t)|<sup>2</sup></i> &nbsp;&nbsp; with &lambda;<sub>n</sub> = 0.95."
     ))
     story.append(Paragraph(
-        "A known drawback of direct spectral subtraction is that random fluctuations in the noise estimate leave isolated, residual frequency peaks. "
-        "When converted back to audio, these peaks sound like annoying high-pitched chirps, called <b>'musical noise'</b>. To prevent this, Boll's algorithm "
-        "uses two control parameters: an <b>over-subtraction factor (&alpha;)</b> and a <b>spectral floor (&beta;)</b>: "
+        "Standard spectral subtraction often produces random frequency peaks because the noise estimate varies from frame to frame. When synthesized back to "
+        "time-domain audio, these peaks sound like a faint, high-pitched metallic ringing called 'musical noise'. To reduce this, Boll (1979) introduced an "
+        "over-subtraction factor (&alpha;) and a spectral floor (&beta;): "
         "<br/><br/>"
         "&nbsp;&nbsp;&nbsp;&nbsp;<b>|S<sub>enhanced</sub>(k, t)|<sup>2</sup> = max(&nbsp;|Y(k, t)|<sup>2</sup> - &alpha; &middot; |D<sub>noise</sub>(k)|<sup>2</sup>,&nbsp;&nbsp; &beta; &middot; |Y(k, t)|<sup>2</sup>&nbsp;)</b>"
         "<br/><br/>"
-        "In this implementation, &alpha; was set to 2.0 for severe noise conditions (SNR &le; 0 dB) to aggressively knock down loud interference, and scaled down "
-        "to 1.2 for milder noise. The spectral floor was fixed at &beta; = 0.02 (-17 dB). Clamping the output to this floor ensures that frequency bins never drop "
-        "to zero, maintaining a natural background sound and eliminating harsh musical noise spikes.", body_style
+        "In my experiments, I set &alpha; = 2.0 for heavy noise (SNR &le; 0 dB) to subtract noise aggressively, reducing it to 1.2 for higher SNRs. "
+        "The spectral floor was set to &beta; = 0.02 (-17 dB). Clamping the output to this floor prevents any frequency bin from dropping completely to zero, "
+        "which keeps the background sounding natural and suppresses sharp musical noise spikes.", body_style
     ))
 
-    story.append(Paragraph("<b>3.3 ASR Model Selection and Architectural Comparison</b>", h2_style))
+    story.append(Paragraph("<b>3.3 ASR Model Architectures</b>", h2_style))
     story.append(Paragraph(
-        "To evaluate how different network designs handle noisy speech, I tested two contrasting modern architectures: "
-        "<br/>&bull; <b>OpenAI Whisper-base (74 Million Parameters):</b> Whisper is a sequence-to-sequence Transformer consisting of an 8-layer encoder and an "
-        "8-layer autoregressive decoder. Because it was pretrained on 680,000 hours of diverse audio scraped from the internet, its encoder has seen many accents "
-        "and recording qualities. More importantly, its autoregressive text decoder acts as an implicit language model: when acoustic features are partially "
-        "masked by noise, the decoder uses previously predicted words to guess the most probable next word from linguistic context. "
-        "<br/>&bull; <b>Meta Wav2Vec 2.0 Base (95 Million Parameters):</b> Wav2Vec 2.0 uses a 7-layer convolutional waveform encoder and a 12-layer Transformer, "
-        "fine-tuned on LibriSpeech using Connectionist Temporal Classification (CTC) loss. Unlike Whisper, Wav2Vec 2.0 maps audio frames directly to character "
-        "tokens without an autoregressive language decoder. This makes it a great benchmark for measuring pure acoustic degradation, because errors directly reflect "
-        "how badly the input audio features were corrupted.", body_style
+        "I compared two different neural network designs: "
+        "<br/>&bull; <b>OpenAI Whisper-base (74 Million Parameters):</b> Whisper uses an encoder-decoder Transformer architecture with 8 encoder layers and "
+        "8 decoder layers. It was trained on 680,000 hours of weakly supervised audio from the internet. Its autoregressive decoder functions like a language model: "
+        "if some acoustic features are muffled by noise, the decoder can often guess the missing words based on the context of preceding words. "
+        "<br/>&bull; <b>Meta Wav2Vec 2.0 Base (95 Million Parameters):</b> Wav2Vec 2.0 processes raw waveforms through 7 convolutional layers followed by a "
+        "12-layer Transformer encoder, trained on LibriSpeech using CTC loss. It outputs character tokens directly from each frame without an autoregressive "
+        "text decoder. This makes it an ideal model for assessing raw acoustic damage, because any corruption in the audio immediately shows up in the output transcription.", body_style
     ))
     story.append(Spacer(1, 4))
 
@@ -373,18 +361,16 @@ def build_pdf_report(filename):
     story.append(Paragraph("4. Experimental Setup & Quantitative Results", h1_style))
     story.append(HRFlowable(width="100%", thickness=1, color=colors.HexColor('#0D47A1'), spaceAfter=5))
 
-    story.append(Paragraph("<b>4.1 Test Corpora and Noise Injection Process</b>", h2_style))
+    story.append(Paragraph("<b>4.1 Dataset Details and Noise Injection</b>", h2_style))
     story.append(Paragraph(
         "The benchmark evaluation was constructed using real-world audio datasets: "
-        "<br/>&bull; <b>Speech Corpus:</b> 100 randomly sampled test utterances from the <i>LibriSpeech test-clean</i> benchmark, representing 10 different "
-        "speakers (5 male and 5 female) with a combined audio duration of 15.4 minutes (924 seconds) and 2,842 total spoken words. "
-        "<br/>&bull; <b>Noise Corpus:</b> Real background noise recordings obtained from the <i>MUSAN</i> corpus: "
-        "<br/>&nbsp;&nbsp;&nbsp;&nbsp;1. <i>Automotive Traffic Noise:</i> Recordings inside vehicle cabins, tire rolling noise on wet pavement, and passing traffic. "
-        "<br/>&nbsp;&nbsp;&nbsp;&nbsp;2. <i>Café Babble Noise:</i> Uncoordinated conversations from crowded cafés, simulating a lively living room or office. "
-        "<br/>&nbsp;&nbsp;&nbsp;&nbsp;3. <i>Background Music:</i> Instrumental tracks featuring acoustic guitar, drums, and piano. "
-        "<br/>&bull; <b>Controlled SNR Mixing:</b> Corrupted speech was generated by calculating the root-mean-square (RMS) power of both clean speech and noise clips, "
-        "then scaling the noise using the formula: <i>&gamma; = sqrt(P<sub>speech</sub> / (10<sup>SNR/10</sup> &middot; P<sub>noise</sub>))</i>. "
-        "Recordings were synthesized at Clean (&infin; dB), 20 dB (light noise), 10 dB (moderate noise), and 0 dB (heavy noise where noise power equals speech power).", body_style
+        "<br/>&bull; <b>Speech Samples:</b> I randomly selected 100 audio files from the LibriSpeech test-clean benchmark. These files come from 10 different "
+        "speakers (5 male, 5 female) and contain 2,842 spoken words over a total duration of 15.4 minutes (924 seconds). "
+        "<br/>&bull; <b>Noise Recordings:</b> Three realistic noise profiles were taken from the MUSAN dataset: (1) Automotive Traffic (cabin recordings of road rumble, "
+        "engine hum, tire noise); (2) Café Babble (multiple people speaking simultaneously); (3) Background Music (instrumental tracks with guitar, piano, drums). "
+        "<br/>&bull; <b>Calibrated Mixing:</b> To mix clean speech and noise at exact SNR levels, I calculated the root-mean-square (RMS) power of both signals "
+        "and scaled the noise array: <i>noise_scaled = noise &middot; sqrt(P<sub>speech</sub> / (10<sup>SNR/10</sup> &middot; P<sub>noise</sub>))</i>. "
+        "I tested four conditions: Clean (no noise), 20 dB (mild noise), 10 dB (moderate noise), and 0 dB (heavy noise where noise power equals speech power).", body_style
     ))
 
     # Table 1: Quantitative Results
@@ -428,7 +414,7 @@ def build_pdf_report(filename):
     story.append(Paragraph("Table 1: Quantitative benchmark showing Word Error Rate (WER) and Character Error Rate (CER) across 100 LibriSpeech test utterances mixed with MUSAN noise profiles.", caption_style))
     story.append(Spacer(1, 3))
 
-    # Figure 3: Quantitative Curves (sized slightly more compact to save vertical budget)
+    # Figure 3: Quantitative Curves
     if os.path.exists('figure3_wer_snr_curves.png'):
         story.append(Image('figure3_wer_snr_curves.png', width=470, height=160))
         story.append(Paragraph("Figure 3: Performance degradation curves: (a) Word Error Rate (WER %) across noise types and SNR tiers for raw vs. denoised Whisper models; (b) Character Error Rate (CER %) and Wav2Vec 2.0 comparison under traffic noise.", caption_style))
@@ -436,19 +422,21 @@ def build_pdf_report(filename):
     story.append(Paragraph("<b>4.2 Key Observations from the Quantitative Data</b>", h2_style))
     story.append(Paragraph(
         "Looking at the benchmark numbers in Table 1 and the curves in Figure 3, several clear practical patterns emerge: "
-        "<br/>1. <b>Steep Degradation Below 10 dB:</b> Error rates increase gradually between clean speech and 20 dB, but as soon as SNR drops below 10 dB, "
-        "errors increase rapidly. At 0 dB, speech recognition on raw audio practically breaks down, with errors climbing to 33.5% in traffic and 48.7% in babble noise. "
-        "<br/>2. <b>Babble Noise Causes the Highest Error Rates:</b> Multi-speaker babble consistently degraded accuracy worse than traffic or music (48.7% WER "
-        "vs 33.5% for traffic at 0 dB). Because babble consists of human voices, the acoustic encoder cannot easily differentiate between the target speaker and the background. "
-        "<br/>3. <b>Spectral Subtraction Helps Most in Heavy Noise:</b> Adding Boll's spectral subtraction provided significant gains when noise was severe. "
-        "At 0 dB, traffic WER dropped from 33.5% to 22.8% (a 31.9% relative gain), and babble WER dropped from 48.7% to 34.2%. However, in clean audio (&infin; dB), "
-        "spectral subtraction caused a minor penalty, increasing WER from 4.2% to 4.5% because the filter slightly clipped low-energy consonant sounds. "
-        "<br/>4. <b>Autoregressive Decoding Outperforms Frame CTC:</b> Whisper proved significantly more noise-resilient than Wav2Vec 2.0 across every condition "
-        "(33.5% vs 56.2% WER at 0 dB traffic). Wav2Vec 2.0 lacks a language model decoder, so whenever noise corrupts a frame, it immediately emits a wrong character. "
-        "Whisper, on the other hand, can often infer missing words using sentence context.", body_style
+        "<br/>1. <b>Error Rates Rise Rapidly Below 10 dB:</b> In clean conditions, Whisper achieved a solid 4.2% WER. At 20 dB, performance remained acceptable "
+        "(6.8% to 8.9% WER). However, once noise reached 10 dB and 0 dB, error rates climbed rapidly. At 0 dB, raw Whisper reached 33.5% WER on traffic noise "
+        "and 48.7% on babble noise. "
+        "<br/>2. <b>Babble Noise is the Most Destructive:</b> Across all SNR levels, café chatter caused significantly higher error rates than car rumble or music "
+        "(48.7% vs 33.5% at 0 dB). Because babble consists of human voices with the same formant ranges and pitch dynamics as the speaker, the model cannot "
+        "distinguish target speech from background chatter. "
+        "<br/>3. <b>Spectral Subtraction Provides Practical Gains:</b> Applying spectral subtraction before ASR reduced errors substantially in noisy audio. "
+        "At 0 dB, traffic WER dropped from 33.5% down to 22.8% (a 31.9% relative improvement), and babble WER dropped from 48.7% down to 34.2%. However, in clean audio "
+        "(&infin; dB), spectral subtraction caused a minor 0.3% error penalty (from 4.2% to 4.5% WER) because the filter slightly eroded soft consonant sounds. "
+        "<br/>4. <b>Whisper's Language Decoder Helps in Noise:</b> Whisper consistently outperformed Wav2Vec 2.0 across all noise conditions (33.5% vs 56.2% WER at "
+        "0 dB traffic). Wav2Vec 2.0 evaluates frames independently with CTC loss, so masked sounds immediately cause deletion or substitution errors. Whisper's autoregressive "
+        "decoder uses surrounding sentence context to infer partially masked words.", body_style
     ))
 
-    # Figure 2: Spectrograms (sized slightly more compact)
+    # Figure 2: Spectrograms
     if os.path.exists('figure2_spectrograms.png'):
         story.append(Spacer(1, 3))
         story.append(Image('figure2_spectrograms.png', width=470, height=255))
@@ -541,9 +529,9 @@ def build_pdf_report(filename):
     story.append(Paragraph(
         "<b>Case 1: Consonant Burst Masking in Highway Traffic Noise:</b> "
         "In Sample 1, the user said <i>'navigate to the nearest charging station'</i>, but raw Whisper predicted <i>'nearest starting station'</i>. "
-        "Looking at the spectrogram, the word 'charging' begins with the unvoiced affricate /CH/ (ARPAbet: /CH AA R JH IH NG/). Producing a /CH/ sound "
+        "Looking at the spectrogram, the word 'charging' begins with the unvoiced affricate /ch/ (ARPAbet: /CH AA R JH IH NG/). Producing a /ch/ sound "
         "requires closing the vocal tract and suddenly releasing a high-frequency burst of air across 2.5 to 5 kHz. In the 0 dB traffic recording, loud tire "
-        "rumble and low-frequency wind noise elevated the overall energy floor. The encoder failed to pick out the short /CH/ burst from the noise and "
+        "rumble and low-frequency wind noise elevated the overall energy floor. The encoder failed to pick out the short /ch/ burst from the noise and "
         "substituted it with the familiar sequence /S T/, transcribing 'starting'. Applying spectral subtraction attenuated the low-frequency noise floor by "
         "roughly 14 dB, restoring the high-frequency burst contrast and allowing Whisper to correctly transcribe 'charging'.", body_style
     ))
@@ -566,10 +554,10 @@ def build_pdf_report(filename):
     story.append(Paragraph(
         "<b>Case 4: Musical Noise and Consonant Destruction from Over-Subtraction:</b> "
         "Sample 4 is an important example of why aggressive denoising can backfire. In this test, I ran a phonetically challenging sentence (<i>'she sells sea shells'</i>) "
-        "through the spectral subtraction filter under clean conditions. Voiceless fricatives like /S/ and /SH/ naturally have low energy. When the filter subtracted "
+        "through the spectral subtraction filter under clean conditions. Voiceless fricatives like /s/ and /sh/ naturally have low energy. When the filter subtracted "
         "the noise estimate with an over-subtraction factor of &alpha; = 2.0, it accidentally removed the subtle frication noise above 4 kHz, leaving behind isolated "
         "frequency spikes (musical noise). The acoustic model interpreted these abrupt spectral spikes as stop-consonant bursts, transcribing <i>'she tells tea tell'</i> "
-        "instead of <i>'she sells sea shells'</i> (/S/ replaced by /T/). This confirms that in high-SNR or quiet environments, denoising should be turned off.", body_style
+        "instead of <i>'she sells sea shells'</i> (/s/ replaced by /t/). This confirms that in high-SNR or quiet environments, denoising should be turned off.", body_style
     ))
     story.append(Spacer(1, 4))
 
